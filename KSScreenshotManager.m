@@ -175,16 +175,16 @@ CGImageRef UIGetScreenImage(); //private API for getting an image of the entire 
     }
     
     NSString *devicePrefix = nil;
-    NSString *screenDensity = isRetina ? @"@2x" : @"";
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        devicePrefix = [NSString stringWithFormat:@"iphone%.0f%@", CGRectGetHeight([[UIScreen mainScreen] bounds]), screenDensity];
+        CGFloat height = CGRectGetHeight([[UIScreen mainScreen] bounds]);
+        devicePrefix = [NSString stringWithFormat:@"iOS-%@_", (int)height == 480 ? @"3.5-in" : @"4-in"];
     } else {
-        devicePrefix = [NSString stringWithFormat:@"ipad%@",screenDensity];
+        devicePrefix = @"iOS-iPad_";
     }
     
     NSData *data = UIImagePNGRepresentation(image);
-    NSString *file = [NSString stringWithFormat:@"%@-%@-%@.png", devicePrefix, [[NSLocale currentLocale] localeIdentifier], name];
+    NSString *file = [NSString stringWithFormat:@"%@%@.png", devicePrefix, name];
     NSURL *fileURL = [[self screenshotsURL] URLByAppendingPathComponent:file];
     NSError *error;
     
