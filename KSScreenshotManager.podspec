@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
     s.author       = "Kent Sutherland"
     s.homepage     = "https://github.com/ksuther/KSScreenshotManager"
     s.source       = { :git => 'https://github.com/ksuther/KSScreenshotManager.git', :tag => '0.0.2' }
-    s.source_files = '*.{h,m}'
+    s.source_files = '*.{h,m,py}'
     s.platform     = :ios, '6.0'
 
     s.requires_arc = true

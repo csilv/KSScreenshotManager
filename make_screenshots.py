@@ -25,9 +25,9 @@ def compile_app():
     
     # Force the simulator build to use 32-bit, otherwise UIGetScreenImage doesn't exist
     if options.has_key('workspace'):
-        subprocess.call(['xcodebuild', '-workspace', options['workspace'], '-scheme', options['scheme'], '-configuration', options['build_config'], '-sdk', 'iphonesimulator', 'clean', 'build', 'SYMROOT=build', 'ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO'], stdout=open('/dev/null', 'w'))
+        subprocess.call(['xcodebuild', '-workspace', options['workspace'], '-scheme', options['scheme'], '-configuration', options['build_config'], '-sdk', 'iphonesimulator', 'clean', 'build', 'ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO'], stdout=open('/dev/null', 'w'))
     else:
-        subprocess.call(['xcodebuild', '-target', options['target_name'], '-configuration', options['build_config'], '-sdk', 'iphonesimulator', 'clean', 'build', 'SYMROOT=build', 'ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO'], stdout=open('/dev/null', 'w'))
+        subprocess.call(['xcodebuild', '-target', options['target_name'], '-configuration', options['build_config'], '-sdk', 'iphonesimulator', 'clean', 'build', 'ARCHS=i386', 'ONLY_ACTIVE_ARCH=NO'], stdout=open('/dev/null', 'w'))
     os.chdir(previous_dir)
 
 def quit_simulator():
@@ -111,13 +111,12 @@ if __name__ == '__main__':
         # project_path is relative to the parent directory of config_path
         project_path = os.path.realpath(os.path.join(os.path.dirname(config_path), options['project_path']))
 
+    # If no target or workspace is specified, assume the app has already been compiled manually by XCode
     if options.has_key('workspace') or options.has_key('target_name'):
         print 'Building with ' + options['build_config'] + ' configuration...'
         compile_app()
-        app_path = os.path.join(project_path, 'build', options['build_config'] + '-iphonesimulator', options['app_name'])
-    else:
-        # If no target or workspace is specified, assume the app has already been compiled manually by XCode
-        app_path = os.path.join(XCODE_BUILD_DIR, appBuildDir(project_path), 'Build/Products', options['build_config'] + '-iphonesimulator', options['app_name'])
+
+    app_path = os.path.join(XCODE_BUILD_DIR, appBuildDir(project_path), 'Build/Products', options['build_config'] + '-iphonesimulator', options['app_name'])
 
     # create destination directory
     if not os.path.exists(destination_path):
@@ -125,7 +124,7 @@ if __name__ == '__main__':
 
     for device in options['devices']:
         quit_simulator()
-        
+
         for language in options['languages']:
             language_path = os.path.join(destination_path, language)
             locale = language
@@ -136,11 +135,11 @@ if __name__ == '__main__':
               language = "pt"
 
             print 'Creating screenshots for {} using {}...'.format(language, device)
-            
+
             if 'reset_between_runs' in options and options['reset_between_runs']:
                 quit_simulator()
                 reset_simulator()
-            
+
             iossim(app_path, ['-AppleLanguages', '({})'.format(language), '-AppleLocale', locale, language_path], device)
 
     quit_simulator()
