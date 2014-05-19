@@ -121,6 +121,7 @@ CGImageRef UIGetScreenImage(); //private API for getting an image of the entire 
 
 - (void)saveScreenshot:(NSString *)name includeStatusBar:(BOOL)includeStatusBar
 {
+#if TARGET_IPHONE_SIMULATOR
     //Get image with status bar cropped out
     BOOL isRetina = [[UIScreen mainScreen] scale] != 1.0f;
     CGFloat StatusBarHeight = isRetina ? 40 : 20;
@@ -204,6 +205,9 @@ CGImageRef UIGetScreenImage(); //private API for getting an image of the entire 
             NSLog(@"Failed to write screenshot at %@: %@", fileURL, error);
         }
     }
+#else
+	NSLog(@"Screenshots not supported on device.");
+#endif
 }
 
 @end
